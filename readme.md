@@ -15,6 +15,4 @@ Run the emulator by passing a CHIP-8 ROM file:
 ```
 
 ## Not Yet Implemented
-- **Sound Engine:** Sound beep when timer 0.
-- **Instruction** 1 Instruction is still ignored.
 - **Debugger/Disassembler:** Real-time inspection of CPU state.
