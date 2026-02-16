@@ -5,6 +5,8 @@
 #include <array>
 #include <cstdint>
 #include <fstream>
+#include <optional>
+#include <algorithm>
 
 class Bus
 {
@@ -32,9 +34,17 @@ class Bus
 
         // Return reference to keypad "register/array"
         std::array<bool, 16>& keypad() { return keys; }
-        bool key_pressed(uint8_t reg)
+        bool key_pressed(uint8_t reg) const
         {
                 return keys[reg & 0xF]; // Considering lowest nibble
+        }
+
+        std::optional<uint8_t> any_pressed() const
+        {
+                auto it = std::ranges::find(keys, true);
+                if (it != keys.end())
+                        return static_cast<uint8_t>(std::distance(keys.begin(), it));
+                return std::nullopt;
         }
 
       private: // Bus components

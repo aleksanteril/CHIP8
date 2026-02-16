@@ -201,21 +201,31 @@ CPU::misc_oper(uint8_t x, uint8_t misc_op)
         case 0x07:
                 reg[x] = delay_timer;
                 break;
+
+                // Stuck here until any key read
         case 0x0A:
-                // reg[x] = get_key(); blocking?
+                if (auto key = bus.any_pressed(); key)
+                        reg[x] = *key; // std::optional
+                else
+                        pc -= 2;
                 break;
+
         case 0x15:
                 delay_timer = reg[x];
                 break;
+
         case 0x18:
                 sound_timer = reg[x];
                 break;
+
         case 0x1E:
                 index_reg += reg[x];
                 break;
+
         case 0x29:
                 index_reg = 0x50 + ((reg[x] & 0xF) * 5);
                 break;
+
         case 0x33: // VX to BCD
         {
                 uint8_t value { reg[x] };
@@ -228,10 +238,12 @@ CPU::misc_oper(uint8_t x, uint8_t misc_op)
                 for (auto i{0U}; i <= x; ++i, ++addr)
                         bus.write(addr, reg[i]);
                 break;
+
         case 0x65:
                 for (auto i{0U}; i <= x; ++i, ++addr)
                         reg[i] = bus.read(addr);
                 break;
+
         default:
                 break;
         }
@@ -246,27 +258,33 @@ CPU::al_oper(uint8_t x, uint8_t y, uint8_t al_op)
         case 0x0:
                 reg[x] = reg[y];
                 break;
+
         case 0x1:
                 reg[x] |= reg[y];
                 break;
+
         case 0x2:
                 reg[x] &= reg[y];
                 break;
+
         case 0x3:
                 reg[x] ^= reg[y];
                 break;
+
         case 0x4:
                 // Overflow check
                 flag = (reg[x] + reg[y] > UINT8_MAX) ? 1 : 0;
                 reg[x] += reg[y];
                 reg[0xF] = flag;
                 break;
+
         case 0x5:
                 // Underflow check
                 flag = (reg[x] >= reg[y]) ? 1 : 0;
                 reg[x] -= reg[y];
                 reg[0xF] = flag;
                 break;
+
         case 0x6:
                 // Legacy cmd
                 // reg[x] = reg[y];
@@ -274,12 +292,14 @@ CPU::al_oper(uint8_t x, uint8_t y, uint8_t al_op)
                 reg[x] >>= 1;
                 reg[0xF] = flag;
                 break;
+
         case 0x7:
                 // Underflow check
                 flag = (reg[y] >= reg[x]) ? 1 : 0;
                 reg[x] = reg[y] - reg[x];
                 reg[0xF] = flag;
                 break;
+
         case 0xE:
                 // Legacy cmd
                 // reg[x] = reg[y];
@@ -287,6 +307,7 @@ CPU::al_oper(uint8_t x, uint8_t y, uint8_t al_op)
                 reg[x] <<= 1;
                 reg[0xF] = flag;
                 break;
+
         default:
                 break;
         }
