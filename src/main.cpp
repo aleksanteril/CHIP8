@@ -19,24 +19,31 @@ main(int argc, char* argv[])
                 return 1;
         }
 
-        auto time_s = std::chrono::steady_clock::now();
-        constexpr std::chrono::microseconds frametime(16667);
-
         CPU cpu(bus);
         SDL3 platform;
 
+        // Loop runs at ~500hz, tick is 2ms
+        constexpr std::chrono::microseconds cycle_t(2000); // 500hz
+        constexpr std::chrono::microseconds other_t(16667); // 60hz
+
+        auto time_s = std::chrono::steady_clock::now();
+        auto other_s = std::chrono::steady_clock::now();
         while(!platform.quit) {
-                time_s += frametime; // Calculate sleep time 60 hz
-                std::this_thread::sleep_until(time_s);
 
                 platform.process_events(bus.keypad());
-                // 540 Hz, 9 cycles per loop
-                for (auto i { 0 }; i < 9; ++i)
-                        cpu.cycle();
+                cpu.cycle();
 
-                cpu.update_timers();
-                platform.play_sound(cpu.sound_active());
-                platform.draw_screen(cpu.framebuf_ref());
+                // These happen at 60 hz
+                auto now = std::chrono::steady_clock::now();
+                if (now - other_s > other_t) {
+                        cpu.update_timers();
+                        platform.play_sound(cpu.sound_active());
+                        platform.draw_screen(cpu.framebuf_ref());
+                        other_s += other_t;
+                }
+                
+                time_s += cycle_t;
+                std::this_thread::sleep_until(time_s);
         }
 
         return 0;
