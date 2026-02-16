@@ -22,6 +22,20 @@ FetchContent_MakeAvailable(SDL3)
 file(GLOB EMU_SRC "src/*.cpp" "src/*.hpp")
 add_executable(CHIP8 ${EMU_SRC})
 
+set_target_properties(CHIP8 PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}"
+    RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}"
+)
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}")
+add_custom_command(TARGET CHIP8 POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "$<TARGET_FILE:SDL3::SDL3>"
+    "${CMAKE_SOURCE_DIR}/SDL3.dll"
+    COMMENT "Copying SDL3.dll to project root"
+)
+
 # Prevent WinMain duplication
 target_compile_definitions(CHIP8 PRIVATE SDL_MAIN_HANDLED)
 

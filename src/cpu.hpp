@@ -24,7 +24,7 @@ class Stack // LIFO, ptr points to empty slot
                 return stack[--stack_ptr];
         }
       private:
-        std::array<uint16_t, 16> stack;
+        std::array<uint16_t, 16> stack {};
         uint8_t stack_ptr { 0 };
 };
 
@@ -44,7 +44,7 @@ class CPU
         void al_oper(uint8_t x, uint8_t y, uint8_t arithmetic_op);
         void misc_oper(uint8_t x, uint8_t nn);
 
-        std::array<uint8_t, 16> reg; // Registers V0-VF
+        std::array<uint8_t, 16> reg {}; // Registers V0-VF
         uint16_t index_reg {};
         uint16_t pc { 0x200 };
 
@@ -54,7 +54,7 @@ class CPU
         std::default_random_engine rng { std::random_device{}() };
         std::uniform_int_distribution<int> distr{ 0, 255 };
 
-        std::array<bool, 64 * 32> framebuf; // Framebuffer to draw to
+        std::array<bool, 64 * 32> framebuf {}; // Framebuffer to draw to
         void draw_framebuf(uint8_t x, uint8_t y, uint8_t n);
 };
 

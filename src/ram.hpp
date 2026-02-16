@@ -17,7 +17,7 @@ class RAM
       private:
         static constexpr int size = 4096;
         static constexpr int reserved = 0x200;
-        std::array<uint8_t, size> ram;
+        std::array<uint8_t, size> ram {};
 };
 
 #endif

@@ -6,12 +6,13 @@
 #include <fstream>
 #include <iostream>
 
+#define SLEEP_INTERVAL 17
+
 int
 main(int argc, char* argv[])
 {
         Bus bus;
         if (std::ifstream file(argv[1], std::ios::binary); file.is_open()) {
-        //if (std::ifstream file("chip8-logo.ch8", std::ios::binary); file.is_open()) {
                 bus.load_rom(file);
         } else {
                 std::cout << "File could not be opened\n";
@@ -29,7 +30,7 @@ main(int argc, char* argv[])
                 cpu.update_timers();
 
                 platform.draw_screen(cpu.framebuf_ref());
-                platform.sleep(1 / 60);
+                platform.sleep(SLEEP_INTERVAL); // Poll at 60Hz
         }
 
         return 0;

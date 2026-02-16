@@ -235,6 +235,8 @@ CPU::misc_oper(uint8_t x, uint8_t misc_op)
 void
 CPU::al_oper(uint8_t x, uint8_t y, uint8_t al_op)
 {
+        uint8_t flag {};
+
         switch(al_op) {
         case 0x0:
                 reg[x] = reg[y];
@@ -250,30 +252,35 @@ CPU::al_oper(uint8_t x, uint8_t y, uint8_t al_op)
                 break;
         case 0x4:
                 // Overflow check
-                reg[0xF] = (reg[x] + reg[y] > UINT8_MAX) ? 1 : 0;
+                flag = (reg[x] + reg[y] > UINT8_MAX) ? 1 : 0;
                 reg[x] += reg[y];
+                reg[0xF] = flag;
                 break;
         case 0x5:
                 // Underflow check
-                reg[0xF] = (reg[x] >= reg[y]) ? 1 : 0;
+                flag = (reg[x] >= reg[y]) ? 1 : 0;
                 reg[x] -= reg[y];
+                reg[0xF] = flag;
                 break;
         case 0x6:
                 // Legacy cmd
                 // reg[x] = reg[y];
-                reg[0xF] = reg[x] & 0x1;
+                flag = reg[x] & 0x1;
                 reg[x] >>= 1;
+                reg[0xF] = flag;
                 break;
         case 0x7:
                 // Underflow check
-                reg[0xF] = (reg[y] >= reg[x]) ? 1 : 0;
+                flag = (reg[y] >= reg[x]) ? 1 : 0;
                 reg[x] = reg[y] - reg[x];
+                reg[0xF] = flag;
                 break;
         case 0xE:
                 // Legacy cmd
                 // reg[x] = reg[y];
-                reg[0xF] = (reg[x] >> 7) & 0x1;
+                flag = (reg[x] >> 7) & 0x1;
                 reg[x] <<= 1;
+                reg[0xF] = flag;
                 break;
         default:
                 break;
