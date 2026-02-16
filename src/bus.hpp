@@ -6,7 +6,7 @@
 #include <cstdint>
 #include <fstream>
 
-constexpr uint16_t RESERVED = 0x200;
+static constexpr uint16_t RESERVED = 0x200;
 
 class Bus
 {

@@ -29,6 +29,7 @@ class SDL3 : public Platform
 
 
       private:
+        std::array<uint32_t, 64 * 32> pixels;
         static constexpr uint32_t width = 1280;
         static constexpr uint32_t height = 640;
         SDL_Window* sdlWindow = nullptr;

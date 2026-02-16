@@ -32,7 +32,6 @@ void
 SDL3::draw_screen(std::array<bool, 64 * 32>& buffer)
 {
         // Convert the chip8 framebuf
-        std::array<uint32_t, 64 * 32> pixels;
         std::ranges::transform(buffer, pixels.begin(), [](bool px) {
                 return px ? 0xFFFFFFFF : 0x000000FF;
         });
