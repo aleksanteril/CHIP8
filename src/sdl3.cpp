@@ -58,18 +58,18 @@ SDL3::draw_screen(std::array<bool, 64 * 32>& buffer)
         SDL_RenderPresent(sdlRenderer);
 }
 
-// Generate a beep of 440hz with amplitude of 4000
-// Made to work with the 44000 sample rate
-std::array<int16_t, 500> sqwave()
+// Generate a beep of 500hz with amplitude of 4000
+// This works only with the 44000 sample rate
+std::array<int16_t, 528> 
+sqwave()
 {
-        std::array<int16_t, 500> samples;
-        constexpr int freq { 440 };
+        std::array<int16_t, 528> samples;
         constexpr int A { 4000 };
 
         int i{};
         for (auto& sample : samples) {
-                sample = i++ < 50 ? A : A*-1;
-                if (i == 100) i = 0;
+                sample = i++ < 44 ? A : A*-1;
+                if (i == 88) i = 0;
         }
         return samples;
 
