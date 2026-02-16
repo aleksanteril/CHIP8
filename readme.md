@@ -1,5 +1,7 @@
 # CHIP-8 Emulator
 
+![CHIP-8 Demo](assets/outlaw_demo.gif)
+
 A simple CHIP-8 interpreter written in C++20, for practice.
 Currently using SDL3 as the media platform, but this can be modified easily.
 
