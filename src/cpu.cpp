@@ -27,7 +27,6 @@ CPU::CPU(Bus& bus)
         uint16_t addr { 0x50 };
         for (auto byte : font_set) // Load font data to 0x50 - 0x9F
                 bus.write(addr++, byte);
-        std::srand(std::time({}));
 }
 
 void
