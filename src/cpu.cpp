@@ -82,6 +82,12 @@ CPU::framebuf_ref()
         return framebuf;
 }
 
+bool
+CPU::sound_active()
+{
+        return sound_timer > 0;
+}
+
 void 
 CPU::update_timers()
 {

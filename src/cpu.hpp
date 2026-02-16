@@ -34,6 +34,7 @@ class CPU
         explicit CPU(Bus& bus);
         void cycle();
         void update_timers(); // Poll this at ~ 60hz
+        bool sound_active();
         std::array<bool, 64 * 32>& framebuf_ref();
 
       private:

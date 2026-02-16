@@ -6,8 +6,6 @@
 #include <cstdint>
 #include <fstream>
 
-static constexpr uint16_t RESERVED = 0x200;
-
 class Bus
 {
       public:
@@ -28,7 +26,7 @@ class Bus
         void load_rom(std::ifstream& file) //*.ch8
         {
                 char byte; // Programs start from 0x200
-                for (uint16_t addr{ RESERVED }; file.get(byte); ++addr)
+                for (uint16_t addr{ 0x200 }; file.get(byte); ++addr)
                         ram.write(addr, static_cast<uint8_t>(byte));
         }
 

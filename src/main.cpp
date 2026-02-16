@@ -35,6 +35,7 @@ main(int argc, char* argv[])
                         cpu.cycle();
 
                 cpu.update_timers();
+                platform.play_sound(cpu.sound_active());
                 platform.draw_screen(cpu.framebuf_ref());
         }
 

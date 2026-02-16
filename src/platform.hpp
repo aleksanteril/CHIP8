@@ -14,6 +14,7 @@ class Platform
         virtual ~Platform() = default;
         virtual void draw_screen(std::array<bool, 64 * 32>& buffer) = 0;
         virtual void process_events(std::array<bool, 16>& keypad) = 0;
+        virtual void play_sound(bool active) = 0;
         bool quit { false };
 
       private:
@@ -26,6 +27,7 @@ class SDL3 : public Platform
         ~SDL3() override;
         void draw_screen(std::array<bool, 64 * 32>& buffer) override;
         void process_events(std::array<bool, 16>& keypad) override;
+        void play_sound(bool active) override;
 
 
       private:
@@ -35,6 +37,10 @@ class SDL3 : public Platform
         SDL_Window* sdlWindow = nullptr;
         SDL_Renderer* sdlRenderer = nullptr;
         SDL_Texture* sdlTexture = nullptr;
+
+        SDL_AudioDeviceID audioDevice = 0;
+        SDL_AudioStream* audioStream = nullptr;
+
         SDL_Event event;
 };
 
