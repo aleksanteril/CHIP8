@@ -60,19 +60,19 @@ SDL3::draw_screen(std::array<bool, 64 * 32>& buffer)
 
 // Generate a beep of 500hz with amplitude of 4000
 // This works only with the 44000 sample rate
-std::array<int16_t, 528> 
+std::array<int16_t, 528>
 sqwave()
 {
         std::array<int16_t, 528> samples;
-        constexpr int A { 4000 };
+        constexpr int A{ 4000 };
 
         int i{};
         for (auto& sample : samples) {
-                sample = i++ < 44 ? A : A*-1;
-                if (i == 88) i = 0;
+                sample = i++ < 44 ? A : A * -1;
+                if (i == 88)
+                        i = 0;
         }
         return samples;
-
 }
 
 void
@@ -85,7 +85,8 @@ SDL3::play_sound(bool active)
 
         if (SDL_GetAudioStreamQueued(audioStream) < 2000) {
                 auto sound = sqwave();
-                SDL_PutAudioStreamData(audioStream, sound.data(), sound.size()*sizeof(int16_t));
+                SDL_PutAudioStreamData(
+                  audioStream, sound.data(), sound.size() * sizeof(int16_t));
         }
 }
 
@@ -93,70 +94,70 @@ void
 SDL3::process_events(std::array<bool, 16>& keypad)
 {
         while (SDL_PollEvent(&event)) {
-                switch (event.type) {
-                        case SDL_EVENT_QUIT:
-                                quit = true;
-                                break;
-                        case SDL_EVENT_KEY_DOWN:
-                        case SDL_EVENT_KEY_UP:
-                                switch (event.key.scancode) {
-                                        case SDL_SCANCODE_1:
-                                                keypad[0x1] = event.key.down;
-                                                break;
-                                        case SDL_SCANCODE_2:
-                                                keypad[0x2] = event.key.down;
-                                                break;
-                                        case SDL_SCANCODE_3:
-                                                keypad[0x3] = event.key.down;
-                                                break;
-                                        case SDL_SCANCODE_4:
-                                                keypad[0xC] = event.key.down;
-                                                break;
+        switch (event.type) {
+        case SDL_EVENT_QUIT:
+                quit = true;
+                break;
+        case SDL_EVENT_KEY_DOWN:
+        case SDL_EVENT_KEY_UP:
+                switch (event.key.scancode) {
+                case SDL_SCANCODE_1:
+                        keypad[0x1] = event.key.down;
+                        break;
+                case SDL_SCANCODE_2:
+                        keypad[0x2] = event.key.down;
+                        break;
+                case SDL_SCANCODE_3:
+                        keypad[0x3] = event.key.down;
+                        break;
+                case SDL_SCANCODE_4:
+                        keypad[0xC] = event.key.down;
+                        break;
 
-                                        case SDL_SCANCODE_Q:
-                                                keypad[0x4] = event.key.down;
-                                                break;
-                                        case SDL_SCANCODE_W:
-                                                keypad[0x5] = event.key.down;
-                                                break;
-                                        case SDL_SCANCODE_E:
-                                                keypad[0x6] = event.key.down;
-                                                break;
-                                        case SDL_SCANCODE_R:
-                                                keypad[0xD] = event.key.down;
-                                                break;
+                case SDL_SCANCODE_Q:
+                        keypad[0x4] = event.key.down;
+                        break;
+                case SDL_SCANCODE_W:
+                        keypad[0x5] = event.key.down;
+                        break;
+                case SDL_SCANCODE_E:
+                        keypad[0x6] = event.key.down;
+                        break;
+                case SDL_SCANCODE_R:
+                        keypad[0xD] = event.key.down;
+                        break;
 
-                                        case SDL_SCANCODE_A:
-                                                keypad[0x7] = event.key.down;
-                                                break;
-                                        case SDL_SCANCODE_S:
-                                                keypad[0x8] = event.key.down;
-                                                break;
-                                        case SDL_SCANCODE_D:
-                                                keypad[0x9] = event.key.down;
-                                                break;
-                                        case SDL_SCANCODE_F:
-                                                keypad[0xE] = event.key.down;
-                                                break;
+                case SDL_SCANCODE_A:
+                        keypad[0x7] = event.key.down;
+                        break;
+                case SDL_SCANCODE_S:
+                        keypad[0x8] = event.key.down;
+                        break;
+                case SDL_SCANCODE_D:
+                        keypad[0x9] = event.key.down;
+                        break;
+                case SDL_SCANCODE_F:
+                        keypad[0xE] = event.key.down;
+                        break;
 
-                                        case SDL_SCANCODE_Z:
-                                                keypad[0xA] = event.key.down;
-                                                break;
-                                        case SDL_SCANCODE_X:
-                                                keypad[0x0] = event.key.down;
-                                                break;
-                                        case SDL_SCANCODE_C:
-                                                keypad[0xB] = event.key.down;
-                                                break;
-                                        case SDL_SCANCODE_V:
-                                                keypad[0xF] = event.key.down;
-                                                break;
-                                        default:
-                                                break;
-                                }
-                                break;
-                        default:
-                                break;
+                case SDL_SCANCODE_Z:
+                        keypad[0xA] = event.key.down;
+                        break;
+                case SDL_SCANCODE_X:
+                        keypad[0x0] = event.key.down;
+                        break;
+                case SDL_SCANCODE_C:
+                        keypad[0xB] = event.key.down;
+                        break;
+                case SDL_SCANCODE_V:
+                        keypad[0xF] = event.key.down;
+                        break;
+                default:
+                        break;
                 }
+                break;
+        default:
+                break;
+        }
         }
 }
