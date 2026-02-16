@@ -14,7 +14,6 @@ class Platform
         virtual ~Platform() = default;
         virtual void draw_screen(std::array<bool, 64 * 32>& buffer) = 0;
         virtual void process_events(std::array<bool, 16>& keypad) = 0;
-        virtual void sleep(uint32_t milliseconds) = 0;
         bool quit { false };
 
       private:
@@ -27,7 +26,6 @@ class SDL3 : public Platform
         ~SDL3() override;
         void draw_screen(std::array<bool, 64 * 32>& buffer) override;
         void process_events(std::array<bool, 16>& keypad) override;
-        void sleep(uint32_t milliseconds) override;
 
 
       private:

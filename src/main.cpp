@@ -5,8 +5,8 @@
 
 #include <fstream>
 #include <iostream>
-
-#define SLEEP_INTERVAL 17
+#include <chrono>
+#include <thread>
 
 int
 main(int argc, char* argv[])
@@ -19,18 +19,23 @@ main(int argc, char* argv[])
                 return 1;
         }
 
+        auto time_s = std::chrono::steady_clock::now();
+        constexpr std::chrono::microseconds frametime(16667);
+
         CPU cpu(bus);
         SDL3 platform;
 
         while(!platform.quit) {
+                time_s += frametime; // Calculate sleep time 60 hz
+                std::this_thread::sleep_until(time_s);
+
                 platform.process_events(bus.keypad());
-
-                for (auto i { 0 }; i < 10; ++i)
+                // 540 Hz, 9 cycles per loop
+                for (auto i { 0 }; i < 9; ++i)
                         cpu.cycle();
-                cpu.update_timers();
 
+                cpu.update_timers();
                 platform.draw_screen(cpu.framebuf_ref());
-                platform.sleep(SLEEP_INTERVAL); // Poll at 60Hz
         }
 
         return 0;

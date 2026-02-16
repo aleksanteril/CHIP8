@@ -44,12 +44,6 @@ SDL3::draw_screen(std::array<bool, 64 * 32>& buffer)
 }
 
 void
-SDL3::sleep(uint32_t milliseconds)
-{
-        SDL_Delay(milliseconds);
-}
-
-void
 SDL3::process_events(std::array<bool, 16>& keypad)
 {
         while (SDL_PollEvent(&event)) {
