@@ -50,11 +50,41 @@ SDL3::sleep(uint32_t milliseconds)
 }
 
 void
-SDL3::process_events()
+SDL3::process_events(std::array<bool, 16>& keypad)
 {
         while (SDL_PollEvent(&event)) {
-                if (event.type == SDL_EVENT_QUIT) {
+                switch(event.type)
+                {
+                case SDL_EVENT_QUIT:
                         quit = true;
+                        break;
+                case SDL_EVENT_KEY_DOWN:
+                case SDL_EVENT_KEY_UP:
+                        switch(event.key.scancode) {
+                        case SDL_SCANCODE_1: keypad[0x1] = event.key.down; break;
+                        case SDL_SCANCODE_2: keypad[0x2] = event.key.down; break;
+                        case SDL_SCANCODE_3: keypad[0x3] = event.key.down; break;
+                        case SDL_SCANCODE_4: keypad[0xC] = event.key.down; break;
+
+                        case SDL_SCANCODE_Q: keypad[0x4] = event.key.down; break;
+                        case SDL_SCANCODE_W: keypad[0x5] = event.key.down; break;
+                        case SDL_SCANCODE_E: keypad[0x6] = event.key.down; break;
+                        case SDL_SCANCODE_R: keypad[0xD] = event.key.down; break;
+
+                        case SDL_SCANCODE_A: keypad[0x7] = event.key.down; break;
+                        case SDL_SCANCODE_S: keypad[0x8] = event.key.down; break;
+                        case SDL_SCANCODE_D: keypad[0x9] = event.key.down; break;
+                        case SDL_SCANCODE_F: keypad[0xE] = event.key.down; break;
+
+                        case SDL_SCANCODE_Z: keypad[0xA] = event.key.down; break;
+                        case SDL_SCANCODE_X: keypad[0x0] = event.key.down; break;
+                        case SDL_SCANCODE_C: keypad[0xB] = event.key.down; break;
+                        case SDL_SCANCODE_V: keypad[0xF] = event.key.down; break;
+                        default: break;
+                        }
+                        break;
+                default:
+                        break;
                 }
         }
 }

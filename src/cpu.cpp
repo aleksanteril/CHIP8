@@ -2,8 +2,8 @@
 #include <iomanip>
 #include <iostream>
 
-CPU::CPU(Bus bus)
-  : bus(std::move(bus))
+CPU::CPU(Bus& bus)
+  : bus(bus)
 {       
         constexpr uint8_t font_set[80] = {
         0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
@@ -170,9 +170,9 @@ CPU::execute_op(uint16_t opcode)
                 break;
 
         case 0xE000:
-                if ((opcode & 0xFF) == 0x9E /*And key pressed*/)
+                if ((opcode & 0xFF) == 0x9E && bus.key_pressed(reg[x]))
                         pc += 2;
-                else if ((opcode & 0xFF) == 0xA1 /*And key NOT pressed*/) 
+                else if ((opcode & 0xFF) == 0xA1 && !bus.key_pressed(reg[x])) 
                         pc += 2;
                 break;
 

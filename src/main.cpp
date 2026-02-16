@@ -11,7 +11,7 @@
 int
 main(int argc, char* argv[])
 {
-        Bus bus;
+        Bus bus; // Could use a shared ptr for this in the future
         if (std::ifstream file(argv[1], std::ios::binary); file.is_open()) {
                 bus.load_rom(file);
         } else {
@@ -19,11 +19,11 @@ main(int argc, char* argv[])
                 return 1;
         }
 
-        CPU cpu(std::move(bus));
+        CPU cpu(bus);
         SDL3 platform;
 
         while(!platform.quit) {
-                platform.process_events();
+                platform.process_events(bus.keypad());
 
                 for (auto i { 0 }; i < 10; ++i)
                         cpu.cycle();

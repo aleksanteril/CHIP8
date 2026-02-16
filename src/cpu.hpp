@@ -31,13 +31,13 @@ class Stack // LIFO, ptr points to empty slot
 class CPU
 {
       public:
-        explicit CPU(Bus bus);
+        explicit CPU(Bus& bus);
         void cycle();
         void update_timers(); // Poll this at ~ 60hz
         std::array<bool, 64 * 32>& framebuf_ref();
 
       private:
-        Bus bus;
+        Bus& bus;
         Stack stack;
 
         void execute_op(uint16_t opcode);

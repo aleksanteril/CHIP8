@@ -2,6 +2,7 @@
 #define BUS_HPP
 
 #include "ram.hpp"
+#include <array>
 #include <cstdint>
 #include <fstream>
 
@@ -29,8 +30,17 @@ class Bus
                         ram.write(addr, static_cast<uint8_t>(byte));
         }
 
+        // Return reference to keypad "register/array"
+        std::array<bool, 16>& keypad() { return keys; }
+        bool key_pressed(uint8_t reg)
+        {
+                return keys[reg & 0xF]; // Considering lowest nibble
+        }
+
       private: // Bus components
         RAM ram;
+        // Keypad array here, could be an object
+        std::array<bool, 16> keys{};
 };
 
 #endif
