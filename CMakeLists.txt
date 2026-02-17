@@ -29,12 +29,15 @@ set_target_properties(CHIP8 PROPERTIES
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}")
+
+if(WIN32)
 add_custom_command(TARGET CHIP8 POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
     "$<TARGET_FILE:SDL3::SDL3>"
-    "${CMAKE_SOURCE_DIR}/SDL3.dll"
+    "${CMAKE_SOURCE_DIR}/$<TARGET_FILE_NAME:SDL3::SDL3>"
     COMMENT "Copying SDL3.dll to project root"
 )
+endif()
 
 # Prevent WinMain duplication
 target_compile_definitions(CHIP8 PRIVATE SDL_MAIN_HANDLED)
