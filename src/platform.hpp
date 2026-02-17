@@ -7,6 +7,7 @@
 #include <array>
 #include <cstdint>
 #include <stdexcept>
+#include <memory>
 
 class Platform
 {
@@ -34,12 +35,12 @@ class SDL3 : public Platform
         std::array<uint32_t, 64 * 32> pixels;
         static constexpr uint32_t width = 1280;
         static constexpr uint32_t height = 640;
-        SDL_Window* sdlWindow = nullptr;
-        SDL_Renderer* sdlRenderer = nullptr;
-        SDL_Texture* sdlTexture = nullptr;
 
+        std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)> sdlWindow {nullptr, SDL_DestroyWindow};
+        std::unique_ptr<SDL_Renderer, decltype(&SDL_DestroyRenderer)> sdlRenderer {nullptr, SDL_DestroyRenderer};
+        std::unique_ptr<SDL_Texture, decltype(&SDL_DestroyTexture)> sdlTexture {nullptr, SDL_DestroyTexture};
+        std::unique_ptr<SDL_AudioStream, decltype(&SDL_DestroyAudioStream)> audioStream {nullptr, SDL_DestroyAudioStream};
         SDL_AudioDeviceID audioDevice = 0;
-        SDL_AudioStream* audioStream = nullptr;
 
         SDL_Event event;
 };

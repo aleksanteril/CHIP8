@@ -3,22 +3,29 @@
 
 SDL3::SDL3()
 {
-        if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO))
+        if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO)) 
                 throw std::runtime_error("Could not init video");
 
+        // Temporary pointers
+        SDL_Window* window{ nullptr };
+        SDL_Renderer* render{ nullptr };
+
         if (!SDL_CreateWindowAndRenderer(
-              "Chip8 - AL", width, height, 0, &sdlWindow, &sdlRenderer))
+              "Chip8 - AL", width, height, 0, &window, &render))
                 throw std::runtime_error("Could not create window");
 
-        sdlTexture = SDL_CreateTexture(sdlRenderer,
-                                       SDL_PIXELFORMAT_RGBA8888,
-                                       SDL_TEXTUREACCESS_STREAMING,
-                                       64,
-                                       32);
+        sdlWindow.reset(window);
+        sdlRenderer.reset(render);
+
+        sdlTexture.reset(SDL_CreateTexture(sdlRenderer.get(),
+                                           SDL_PIXELFORMAT_RGBA8888,
+                                           SDL_TEXTUREACCESS_STREAMING,
+                                           64,
+                                           32));
         if (sdlTexture == nullptr)
                 throw std::runtime_error("Error creating texture");
 
-        SDL_SetTextureScaleMode(sdlTexture, SDL_SCALEMODE_NEAREST);
+        SDL_SetTextureScaleMode(sdlTexture.get(), SDL_SCALEMODE_NEAREST);
 
         audioDevice =
           SDL_OpenAudioDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, nullptr);
@@ -26,20 +33,17 @@ SDL3::SDL3()
                 throw std::runtime_error("Could not init audio");
 
         SDL_AudioSpec spec = { SDL_AUDIO_S16, 1, 44000 };
-        audioStream = SDL_CreateAudioStream(&spec, nullptr);
+        audioStream.reset(SDL_CreateAudioStream(&spec, nullptr));
         if (!audioStream)
                 throw std::runtime_error("Could not create audio stream");
 
-        SDL_BindAudioStream(audioDevice, audioStream);
+        SDL_BindAudioStream(audioDevice, audioStream.get());
         SDL_ResumeAudioDevice(audioDevice);
 }
 
 SDL3::~SDL3()
 {
-        SDL_DestroyAudioStream(audioStream);
         SDL_CloseAudioDevice(audioDevice);
-        SDL_DestroyRenderer(sdlRenderer);
-        SDL_DestroyWindow(sdlWindow);
         SDL_Quit();
 }
 
@@ -52,10 +56,11 @@ SDL3::draw_screen(std::array<bool, 64 * 32>& buffer)
         });
 
         SDL_UpdateTexture(
-          sdlTexture, nullptr, pixels.data(), 64 * sizeof(uint32_t));
-        SDL_RenderClear(sdlRenderer);
-        SDL_RenderTexture(sdlRenderer, sdlTexture, nullptr, nullptr);
-        SDL_RenderPresent(sdlRenderer);
+          sdlTexture.get(), nullptr, pixels.data(), 64 * sizeof(uint32_t));
+        SDL_RenderClear(sdlRenderer.get());
+        SDL_RenderTexture(
+          sdlRenderer.get(), sdlTexture.get(), nullptr, nullptr);
+        SDL_RenderPresent(sdlRenderer.get());
 }
 
 // Generate a beep of 500hz with amplitude of 4000
@@ -79,14 +84,15 @@ void
 SDL3::play_sound(bool active)
 {
         if (!active) { // Empty the stream
-                SDL_ClearAudioStream(audioStream);
+                SDL_ClearAudioStream(audioStream.get());
                 return;
         }
 
-        if (SDL_GetAudioStreamQueued(audioStream) < 2000) {
+        if (SDL_GetAudioStreamQueued(audioStream.get()) < 2000) {
                 auto sound = sqwave();
-                SDL_PutAudioStreamData(
-                  audioStream, sound.data(), sound.size() * sizeof(int16_t));
+                SDL_PutAudioStreamData(audioStream.get(),
+                                       sound.data(),
+                                       sound.size() * sizeof(int16_t));
         }
 }
 
