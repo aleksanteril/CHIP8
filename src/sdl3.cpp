@@ -65,9 +65,7 @@ SDL3::draw_screen(std::array<bool, 64 * 32>& buffer)
 
 // Generate a beep of 500hz with amplitude of 4000
 // This works only with the 44000 sample rate
-std::array<int16_t, 528>
-sqwave()
-{
+static constexpr auto sqwave = []() {
         std::array<int16_t, 528> samples;
         constexpr int A{ 4000 };
 
@@ -78,7 +76,7 @@ sqwave()
                         i = 0;
         }
         return samples;
-}
+}();
 
 void
 SDL3::play_sound(bool active)
@@ -87,12 +85,11 @@ SDL3::play_sound(bool active)
                 SDL_ClearAudioStream(audioStream.get());
                 return;
         }
-
+        
         if (SDL_GetAudioStreamQueued(audioStream.get()) < 2000) {
-                auto sound = sqwave();
                 SDL_PutAudioStreamData(audioStream.get(),
-                                       sound.data(),
-                                       sound.size() * sizeof(int16_t));
+                                       sqwave.data(),
+                                       sqwave.size() * sizeof(int16_t));
         }
 }
 
