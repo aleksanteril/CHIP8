@@ -54,6 +54,12 @@ SDL3::draw_state_text(struct CPU_State& state)
         SDL_SetRenderScale(sdlRenderer.get(), scale, scale);
         SDL_SetRenderDrawColor(sdlRenderer.get(), 255, 255, 255, 255);
 
+        //Print stack values
+        SDL_RenderDebugTextFormat(sdlRenderer.get(), 1000 / scale, 10, "ST_PTR [ 0x%03X ]", state.stack_ptr);
+        for(auto i{ 0 }; i < state.stack_ptr; ++i) 
+                SDL_RenderDebugTextFormat(sdlRenderer.get(), 1000 / scale, 10*(i+2), "[ 0x%03X ]", state.stack[i]);
+        
+
         // Draw other state values
         SDL_RenderDebugTextFormat(sdlRenderer.get(),
                                   10,
@@ -79,7 +85,7 @@ SDL3::draw_state_text(struct CPU_State& state)
 }
 
 void
-SDL3::draw_screen(std::array<bool, 64 * 32>& buffer, struct CPU_State state)
+SDL3::draw_screen(const std::array<bool, 64 * 32>& buffer, struct CPU_State state)
 {
         // Convert the chip8 framebuf
         std::ranges::transform(buffer, pixels.begin(), [](bool px) {
@@ -96,7 +102,7 @@ SDL3::draw_screen(std::array<bool, 64 * 32>& buffer, struct CPU_State state)
 }
 
 void
-SDL3::draw_screen(std::array<bool, 64 * 32>& buffer)
+SDL3::draw_screen(const std::array<bool, 64 * 32>& buffer)
 {
         // Convert the chip8 framebuf
         std::ranges::transform(buffer, pixels.begin(), [](bool px) {

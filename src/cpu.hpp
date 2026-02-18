@@ -24,6 +24,11 @@ class Stack // LIFO, ptr points to empty slot
                         throw std::overflow_error("Stack underflow");
                 return stack[--stack_ptr];
         }
+
+        // For snapshotting values of the stack
+        const std::array<uint16_t, 16>& data() const { return stack; };
+        uint8_t ptr() const { return stack_ptr; };
+
       private:
         std::array<uint16_t, 16> stack {};
         uint8_t stack_ptr { 0 };
@@ -37,8 +42,8 @@ class CPU
         void update_timers(); // Poll this at ~ 60hz
         bool sound_active();
         bool need_draw();
-        struct CPU_State state();
-        std::array<bool, 64 * 32>& framebuf_ref();
+        const struct CPU_State state() const;
+        const std::array<bool, 64 * 32>& framebuf_ref();
 
       private:
         Bus& bus;

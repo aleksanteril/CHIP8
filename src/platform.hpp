@@ -14,8 +14,8 @@ class Platform
 {
       public:
         virtual ~Platform() = default;
-        virtual void draw_screen(std::array<bool, 64 * 32>& buffer) = 0;
-        virtual void draw_screen(std::array<bool, 64 * 32>& buffer, struct CPU_State state) = 0;
+        virtual void draw_screen(const std::array<bool, 64 * 32>& buffer) = 0;
+        virtual void draw_screen(const std::array<bool, 64 * 32>& buffer, struct CPU_State state) = 0;
         virtual void process_events(std::array<bool, 16>& keypad) = 0;
         virtual void play_sound(bool active) = 0;
         bool quit { false };
@@ -28,8 +28,8 @@ class SDL3 : public Platform
       public:
         SDL3();
         ~SDL3() override;
-        void draw_screen(std::array<bool, 64 * 32>& buffer) override;
-        void draw_screen(std::array<bool, 64 * 32>& buffer, struct CPU_State state) override;
+        void draw_screen(const std::array<bool, 64 * 32>& buffer) override;
+        void draw_screen(const std::array<bool, 64 * 32>& buffer, struct CPU_State state) override;
         void process_events(std::array<bool, 16>& keypad) override;
         void play_sound(bool active) override;
 

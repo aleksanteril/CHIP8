@@ -42,10 +42,10 @@ CPU::cycle()
         execute_op(opcode);
 }
 
-struct CPU_State
-CPU::state()
+const struct CPU_State
+CPU::state() const
 {
-        return { reg, index_reg, pc, delay_timer, sound_timer };
+        return { reg, stack.data(), stack.ptr(), index_reg, pc, delay_timer, sound_timer };
 }
 
 void inline print_opcode(uint16_t opcode)
@@ -93,7 +93,7 @@ CPU::need_draw()
         return true;
 }
 
-std::array<bool, 64 * 32>& 
+const std::array<bool, 64 * 32>& 
 CPU::framebuf_ref()
 {
         return framebuf;
