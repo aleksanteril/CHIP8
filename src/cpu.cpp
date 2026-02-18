@@ -186,9 +186,9 @@ CPU::execute_op(uint16_t opcode)
                 break;
 
         default:
+                print_opcode(opcode);
                 break;
         }
-        //print_opcode(opcode);
 }
 
 void
@@ -204,10 +204,15 @@ CPU::misc_oper(uint8_t x, uint8_t misc_op)
 
                 // Stuck here until any key read
         case 0x0A:
-                if (auto key = bus.any_pressed(); key)
-                        reg[x] = *key; // std::optional
-                else
+                if (!tracked_key) {
+                        tracked_key = bus.any_pressed();
                         pc -= 2;
+                } else if (bus.key_pressed(*tracked_key)) 
+                        pc -= 2;
+                else { // Released
+                        reg[x] = *tracked_key;
+                        tracked_key = std::nullopt;
+                }
                 break;
 
         case 0x15:

@@ -48,6 +48,7 @@ class CPU
         std::array<uint8_t, 16> reg {}; // Registers V0-VF
         uint16_t index_reg {};
         uint16_t pc { 0x200 };
+        std::optional<uint8_t> tracked_key { std::nullopt }; // To track for FX0A
 
         uint8_t delay_timer {};
         uint8_t sound_timer {};
