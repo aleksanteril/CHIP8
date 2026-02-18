@@ -36,6 +36,7 @@ class CPU
         void cycle();
         void update_timers(); // Poll this at ~ 60hz
         bool sound_active();
+        bool need_draw();
         struct CPU_State state();
         std::array<bool, 64 * 32>& framebuf_ref();
 
@@ -50,7 +51,9 @@ class CPU
         std::array<uint8_t, 16> reg {}; // Registers V0-VF
         uint16_t index_reg {};
         uint16_t pc { 0x200 };
+
         std::optional<uint8_t> tracked_key { std::nullopt }; // To track for FX0A
+        bool draw_flag{ false }; // True if framebuf updated, clears when reading need_draw()
 
         uint8_t delay_timer {};
         uint8_t sound_timer {};

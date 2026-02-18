@@ -81,7 +81,16 @@ CPU::draw_framebuf(uint8_t x, uint8_t y, uint8_t n)
                         }
                 }
         }
+        draw_flag = true;
+}
 
+bool
+CPU::need_draw()
+{
+        if (!draw_flag) 
+                return false;
+        draw_flag = false;
+        return true;
 }
 
 std::array<bool, 64 * 32>& 

@@ -8,6 +8,8 @@
 #include <chrono>
 #include <thread>
 
+#define DEBUG
+
 int
 main(int argc, char* argv[])
 {
@@ -23,7 +25,7 @@ main(int argc, char* argv[])
         SDL3 platform;
 
         // Loop runs at ~500hz, tick is 2ms
-        constexpr std::chrono::microseconds cycle_t(2000); // 500hz
+        constexpr std::chrono::microseconds cycle_t(1667); // 600hz
         constexpr std::chrono::microseconds other_t(16667); // 60hz
 
         auto time_s = std::chrono::steady_clock::now();
@@ -38,7 +40,14 @@ main(int argc, char* argv[])
                 if (now - other_s > other_t) {
                         cpu.update_timers();
                         platform.play_sound(cpu.sound_active());
-                        platform.draw_screen(cpu.framebuf_ref());
+
+                        #ifdef DEBUG
+                        platform.draw_screen(cpu.framebuf_ref(), std::move(cpu.state()));
+                        #else
+                        if (cpu.need_draw()) 
+                                platform.draw_screen(cpu.framebuf_ref());
+                        #endif
+                        
                         other_s += other_t;
                 }
                 

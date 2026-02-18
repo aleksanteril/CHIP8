@@ -48,6 +48,54 @@ SDL3::~SDL3()
 }
 
 void
+SDL3::draw_state_text(struct CPU_State& state)
+{
+        constexpr double scale{ 2 };
+        SDL_SetRenderScale(sdlRenderer.get(), scale, scale);
+        SDL_SetRenderDrawColor(sdlRenderer.get(), 255, 255, 255, 255);
+
+        // Draw other state values
+        SDL_RenderDebugTextFormat(sdlRenderer.get(),
+                                  10,
+                                  10,
+                                  "PC [ 0x%03X ], I [ 0x%03X ], ST [ 0x%03X ], DT [ 0x%03X ]",
+                                  state.pc,
+                                  state.index_reg,
+                                  state.sound_timer,
+                                  state.delay_timer);
+
+        // Draw register values
+        for (auto i{ 0 }; i < 4; ++i)
+                SDL_RenderDebugTextFormat(sdlRenderer.get(),
+                                          10,
+                                          i*10+20,
+                                          "V%X 0x%03X, V%X 0x%03X, V%X 0x%03X, V%X 0x%03X",
+                                          i, state.registers[i],
+                                          i + 4, state.registers[i + 4],
+                                          i + 8, state.registers[i + 8],
+                                          i + 12, state.registers[i + 12]);
+
+        SDL_SetRenderScale(sdlRenderer.get(), 1, 1);
+}
+
+void
+SDL3::draw_screen(std::array<bool, 64 * 32>& buffer, struct CPU_State state)
+{
+        // Convert the chip8 framebuf
+        std::ranges::transform(buffer, pixels.begin(), [](bool px) {
+                return px ? 0xFFFFFFFF : 0x000000FF;
+        });
+
+        SDL_UpdateTexture(
+          sdlTexture.get(), nullptr, pixels.data(), 64 * sizeof(uint32_t));
+        SDL_RenderClear(sdlRenderer.get());
+        SDL_RenderTexture(
+          sdlRenderer.get(), sdlTexture.get(), nullptr, nullptr);
+        draw_state_text(state);
+        SDL_RenderPresent(sdlRenderer.get());
+}
+
+void
 SDL3::draw_screen(std::array<bool, 64 * 32>& buffer)
 {
         // Convert the chip8 framebuf
