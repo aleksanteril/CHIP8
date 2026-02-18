@@ -1,4 +1,6 @@
 #include "cpu.hpp"
+#include "debug.hpp"
+
 #include <iomanip>
 #include <iostream>
 
@@ -38,6 +40,12 @@ CPU::cycle()
 
         pc += 2;
         execute_op(opcode);
+}
+
+struct CPU_State
+CPU::state()
+{
+        return { reg, index_reg, pc, delay_timer, sound_timer };
 }
 
 void inline print_opcode(uint16_t opcode)

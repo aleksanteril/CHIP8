@@ -10,6 +10,7 @@
 #include <stdexcept>
 #include <random>
 
+
 class Stack // LIFO, ptr points to empty slot
 {
       public:
@@ -35,6 +36,7 @@ class CPU
         void cycle();
         void update_timers(); // Poll this at ~ 60hz
         bool sound_active();
+        struct CPU_State state();
         std::array<bool, 64 * 32>& framebuf_ref();
 
       private:
