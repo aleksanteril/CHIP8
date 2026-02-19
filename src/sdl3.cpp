@@ -43,7 +43,12 @@ SDL3::SDL3()
 
 SDL3::~SDL3()
 {
+        SDL_ClearAudioStream(audioStream.get());
         SDL_CloseAudioDevice(audioDevice);
+        audioStream.reset();
+        sdlTexture.reset();
+        sdlRenderer.reset();
+        sdlWindow.reset();
         SDL_Quit();
 }
 
@@ -51,20 +56,26 @@ void
 SDL3::draw_state_text(struct CPU_State& state)
 {
         constexpr double scale{ 2 };
+
         SDL_SetRenderScale(sdlRenderer.get(), scale, scale);
         SDL_SetRenderDrawColor(sdlRenderer.get(), 255, 255, 255, 255);
 
         //Print stack values
-        SDL_RenderDebugTextFormat(sdlRenderer.get(), 1000 / scale, 10, "ST_PTR [ 0x%03X ]", state.stack_ptr);
-        for(auto i{ 0 }; i < state.stack_ptr; ++i) 
-                SDL_RenderDebugTextFormat(sdlRenderer.get(), 1000 / scale, 10*(i+2), "[ 0x%03X ]", state.stack[i]);
+        SDL_RenderDebugTextFormat(sdlRenderer.get(), 986 / scale, 10, "ST_PTR [ 0x%03X ]", state.stack_ptr);
+        for(auto i{ 0 }, j { 0 }; i < state.stack_ptr; ++i) {
+                if (i < 8)
+                        SDL_RenderDebugTextFormat(sdlRenderer.get(), 960 / scale, 22+(i*10), "[ 0x%03X ]", state.stack[i]);
+                else {
+                        SDL_RenderDebugTextFormat(sdlRenderer.get(), 1110 / scale, 22+(j*10), "[ 0x%03X ]", state.stack[i]);
+                        ++j;
+                }
+        }
         
-
         // Draw other state values
         SDL_RenderDebugTextFormat(sdlRenderer.get(),
                                   10,
                                   10,
-                                  "PC [ 0x%03X ], I [ 0x%03X ], ST [ 0x%03X ], DT [ 0x%03X ]",
+                                  "PC [ 0x%03X ]  I [ 0x%03X ] ST [ 0x%03X ] DT [ 0x%03X ]",
                                   state.pc,
                                   state.index_reg,
                                   state.sound_timer,
@@ -74,8 +85,8 @@ SDL3::draw_state_text(struct CPU_State& state)
         for (auto i{ 0 }; i < 4; ++i)
                 SDL_RenderDebugTextFormat(sdlRenderer.get(),
                                           10,
-                                          i*10+20,
-                                          "V%X 0x%03X, V%X 0x%03X, V%X 0x%03X, V%X 0x%03X",
+                                          20+(i*10),
+                                          "V%X [ 0x%03X ] V%X [ 0x%03X ] V%X [ 0x%03X ] V%X [ 0x%03X ]",
                                           i, state.registers[i],
                                           i + 4, state.registers[i + 4],
                                           i + 8, state.registers[i + 8],
@@ -153,7 +164,7 @@ SDL3::process_events(std::array<bool, 16>& keypad)
         while (SDL_PollEvent(&event)) {
         switch (event.type) {
         case SDL_EVENT_QUIT:
-                quit = true;
+                run = false;
                 break;
         case SDL_EVENT_KEY_DOWN:
         case SDL_EVENT_KEY_UP:
@@ -208,6 +219,9 @@ SDL3::process_events(std::array<bool, 16>& keypad)
                         break;
                 case SDL_SCANCODE_V:
                         keypad[0xF] = event.key.down;
+                        break;
+                case SDL_SCANCODE_ESCAPE:
+                        run = false;
                         break;
                 default:
                         break;

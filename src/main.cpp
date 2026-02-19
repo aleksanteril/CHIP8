@@ -30,8 +30,8 @@ main(int argc, char* argv[])
 
         auto time_s = std::chrono::steady_clock::now();
         auto other_s = std::chrono::steady_clock::now();
-        while(!platform.quit) {
-
+        
+        while(platform.run) {
                 platform.process_events(bus.keypad());
                 cpu.cycle();
 

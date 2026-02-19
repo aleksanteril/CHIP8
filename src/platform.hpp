@@ -18,7 +18,7 @@ class Platform
         virtual void draw_screen(const std::array<bool, 64 * 32>& buffer, struct CPU_State state) = 0;
         virtual void process_events(std::array<bool, 16>& keypad) = 0;
         virtual void play_sound(bool active) = 0;
-        bool quit { false };
+        bool run { true };
 
       private:
 };
@@ -45,7 +45,6 @@ class SDL3 : public Platform
         std::unique_ptr<SDL_Texture, decltype(&SDL_DestroyTexture)> sdlTexture {nullptr, SDL_DestroyTexture};
         std::unique_ptr<SDL_AudioStream, decltype(&SDL_DestroyAudioStream)> audioStream {nullptr, SDL_DestroyAudioStream};
         SDL_AudioDeviceID audioDevice = 0;
-
         SDL_Event event;
 };
 
