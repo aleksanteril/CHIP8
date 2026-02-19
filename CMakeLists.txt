@@ -39,7 +39,4 @@ add_custom_command(TARGET CHIP8 POST_BUILD
 )
 endif()
 
-# Prevent WinMain duplication
-target_compile_definitions(CHIP8 PRIVATE SDL_MAIN_HANDLED)
-
 target_link_libraries(CHIP8 PRIVATE SDL3::SDL3)

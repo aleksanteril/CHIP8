@@ -1,5 +1,6 @@
 #include "platform.hpp"
 #include <algorithm>
+#include <stdexcept>
 
 SDL3::SDL3()
 {

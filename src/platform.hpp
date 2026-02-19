@@ -1,14 +1,8 @@
-#ifndef DISPLAY_HPP
-#define DISPLAY_HPP
+#ifndef PLATFORM_HPP
+#define PLATFORM_HPP
 
-#include <SDL3/SDL.h>
-#include <SDL3/SDL_main.h>
 #include "debug.hpp"
-
 #include <array>
-#include <cstdint>
-#include <stdexcept>
-#include <memory>
 
 class Platform
 {
@@ -22,6 +16,12 @@ class Platform
 
       private:
 };
+
+
+#include <SDL3/SDL.h>
+
+#include <cstdint>
+#include <memory>
 
 class SDL3 : public Platform
 {

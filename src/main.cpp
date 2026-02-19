@@ -1,7 +1,9 @@
-
 #include "platform.hpp"
 #include "bus.hpp"
 #include "cpu.hpp"
+
+// This must be here for SDL to find and macro our main without handle_main def overwrite
+#include <SDL3/SDL_main.h>
 
 #include <fstream>
 #include <iostream>
@@ -13,11 +15,17 @@
 int
 main(int argc, char* argv[])
 {
+        if (argc != 2) {
+                std::cout << "File not provided.\n";
+                std::cout << "Usage: " << argv[0] << " path/to/.ch8\n";
+                return 1;
+        }
+
         Bus bus; // Could use a shared ptr for this in the future
         if (std::ifstream file(argv[1], std::ios::binary); file.is_open()) {
                 bus.load_rom(file);
         } else {
-                std::cout << "File could not be opened\n";
+                std::cout << "File could not be opened.\n";
                 return 1;
         }
 
