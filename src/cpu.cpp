@@ -60,25 +60,24 @@ CPU::draw_framebuf(uint8_t x, uint8_t y, uint8_t n)
         // coords wrap, as specified
         int x_coord  { reg[x] % 64 };
         int y_coord  { reg[y] % 32 };
+        int x_limit { std::min(8, 64 - x_coord) };
+        uint16_t addr { index_reg };
         reg[0xF] = 0;
 
-        uint16_t addr { index_reg };
-        for (auto i {0}; i < n; ++i, ++addr) {
-                uint8_t sprite_byte = bus.read(addr);
+        for (int i { 0 }; i < n; ++i, ++addr) {
+                int draw_y { y_coord + i };
+                if (draw_y > 31)
+                        break;
 
-                for (auto j {0}; j < 8; ++j, sprite_byte <<= 1) {
-                        if (sprite_byte & 0x80) {
-                                int draw_y { y_coord + i };
-                                int draw_x { x_coord + j };
+                int row { 64 * draw_y };
+                uint8_t sprite_byte { bus.read(addr) };
+                for (int j { 0 }; j < x_limit; ++j, sprite_byte <<= 1) {
+                        bool pixel { static_cast<bool>(sprite_byte & 0x80) };
+                        int pos { row + x_coord + j };
 
-                                if (draw_x > 63 || draw_y > 31)
-                                        continue;
-
-                                int pos = (64 * draw_y) + draw_x;
-                                if (framebuf[pos]) // Set VF flag on collision
-                                        reg[0xF] = 1;
-                                framebuf[pos] ^= 1;
-                        }
+                        // Set VF flag on collision
+                        reg[0xF] |= (framebuf[pos] & pixel);
+                        framebuf[pos] ^= pixel;
                 }
         }
         draw_flag = true;
