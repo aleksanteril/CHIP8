@@ -64,12 +64,8 @@ CPU::draw_framebuf(uint8_t x, uint8_t y, uint8_t n)
         uint16_t addr { index_reg };
         reg[0xF] = 0;
 
-        for (int i { 0 }; i < n; ++i, ++addr) {
-                int draw_y { y_coord + i };
-                if (draw_y > 31)
-                        break;
-
-                int row { 64 * draw_y };
+        for (; y_coord < 32 && n--; ++y_coord, ++addr) {
+                int row { 64 * y_coord };
                 uint8_t sprite_byte { bus.read(addr) };
                 for (int j { 0 }; j < x_limit; ++j, sprite_byte <<= 1) {
                         bool pixel { static_cast<bool>(sprite_byte & 0x80) };
